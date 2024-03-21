@@ -30,10 +30,7 @@ public class DatabaseMethods {
     String accountQuery = "SELECT  a.FIRST_NAME, a.LAST_NAME, a.BIRTHDATE, a.PHONE_NUMBER, a.EMAIL, ad.STREET, ad.CITY, ad.PROVINCE, ad.POSTAL_CODE, d.ID AS 'Driver account', p.ID AS 'Passenger Account' FROM accounts a LEFT Join addresses ad ON a.ADDRESS_ID = ad.ID LEFT JOIN drivers d ON a.ID = d.ID LEFT JOIN passengers p ON a.ID = p.ID";
     try(Statement stmt = conn.createStatement();){
       try(ResultSet accountResults = stmt.executeQuery(accountQuery);){
-        System.out.printf("%-10s %-10s %-15s %-15s %-15s %-30s %-10s %-10s %-15s %-10s %-10s %n", "FIRST_NAME", "LAST_NAME",
-            "BIRTHDATE", "PHONE_NUMBER",
-            "EMAIL", "STREET", "CITY", "PROVINCE", "POSTAL CODE", "DRIVER", "PASSENGER");
-    
+
         while (accountResults.next()) {
           String firstName = accountResults.getString("FIRST_NAME");
           String lastName = accountResults.getString("LAST_NAME");
@@ -44,32 +41,28 @@ public class DatabaseMethods {
           String city = accountResults.getString("CITY");
           String province = accountResults.getString("PROVINCE");
           String postalCode = accountResults.getString("POSTAL_CODE");
-          String driver;
-          String passenger;
+          boolean driver;
+          boolean passenger;
           
           int driverAccount = accountResults.getInt("Driver account");
           int passengerAccount = accountResults.getInt("Passenger Account");
     
           if(driverAccount == 0){
-            driver = "NO";
+            driver = false;
           }
           else{
-            driver = "YES";
+            driver = true;
           }
           if(passengerAccount == 0){
-            passenger = "NO";
+            passenger = false;
           }
           else {
-            passenger = "YES";
+            passenger = true;
           }
-          System.out.printf("%-10s %-10s %-15s %-15s %-15s %-30s %-10s %-10s %-15s %-10s %-10s %n", 
-            firstName, lastName, birthDate, phoneNumber, email, street, city, province, postalCode, driver, passenger);
-
+          Account acc = new Account(firstName, lastName, street, city, province, postalCode, phoneNumber, email, birthDate, passenger, driver);
+          accounts.add(acc);
         }
       }
-      // catch(SQLException e){
-      //   return e;
-      // }
     }
     return accounts;
   }
