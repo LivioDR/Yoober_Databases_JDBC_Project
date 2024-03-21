@@ -28,29 +28,48 @@ public class DatabaseMethods {
 
     // TODO: Implement
     String accountQuery = "SELECT  a.FIRST_NAME, a.LAST_NAME, a.BIRTHDATE, a.PHONE_NUMBER, a.EMAIL, ad.STREET, ad.CITY, ad.PROVINCE, ad.POSTAL_CODE, d.ID AS 'Driver account', p.ID AS 'Passenger Account' FROM accounts a LEFT Join addresses ad ON a.ADDRESS_ID = ad.ID LEFT JOIN drivers d ON a.ID = d.ID LEFT JOIN passengers p ON a.ID = p.ID";
-    Statement stmt = conn.createStatement();
-    ResultSet accountResults = stmt.executeQuery(accountQuery);
-    System.out.printf("%-10s %-10s %-15s %s %s %s %s %-10s %s %s %s %n", "FIRST_NAME", "LAST_NAME",
-        "BIRTHDATE", "PHONE_NUMBER",
-        "EMAIL", "STREET", "CITY", "PROVINCE", "POSTAL CODE", "DRIVER'S ACCOUNT", "PASSENGER ACCOUNT");
+    try(Statement stmt = conn.createStatement();){
+      try(ResultSet accountResults = stmt.executeQuery(accountQuery);){
+        System.out.printf("%-10s %-10s %-15s %-15s %-15s %-30s %-10s %-10s %-15s %-10s %-10s %n", "FIRST_NAME", "LAST_NAME",
+            "BIRTHDATE", "PHONE_NUMBER",
+            "EMAIL", "STREET", "CITY", "PROVINCE", "POSTAL CODE", "DRIVER", "PASSENGER");
+    
+        while (accountResults.next()) {
+          String firstName = accountResults.getString("FIRST_NAME");
+          String lastName = accountResults.getString("LAST_NAME");
+          String birthDate = accountResults.getString("BIRTHDATE");
+          String phoneNumber = accountResults.getString("PHONE_NUMBER");
+          String email = accountResults.getString("EMAIL");
+          String street = accountResults.getString("STREET");
+          String city = accountResults.getString("CITY");
+          String province = accountResults.getString("PROVINCE");
+          String postalCode = accountResults.getString("POSTAL_CODE");
+          String driver;
+          String passenger;
+          
+          int driverAccount = accountResults.getInt("Driver account");
+          int passengerAccount = accountResults.getInt("Passenger Account");
+    
+          if(driverAccount == 0){
+            driver = "NO";
+          }
+          else{
+            driver = "YES";
+          }
+          if(passengerAccount == 0){
+            passenger = "NO";
+          }
+          else {
+            passenger = "YES";
+          }
+          System.out.printf("%-10s %-10s %-15s %-15s %-15s %-30s %-10s %-10s %-15s %-10s %-10s %n", 
+            firstName, lastName, birthDate, phoneNumber, email, street, city, province, postalCode, driver, passenger);
 
-    while (accountResults.next()) {
-      String firstName = accountResults.getString("FIRST_NAME");
-      String lastName = accountResults.getString("LAST_NAME");
-      String birthDate = accountResults.getString("BIRTHDATE");
-      String phoneNumber = accountResults.getString("PHONE_NUMBER");
-      String email = accountResults.getString("EMAIL");
-      String street = accountResults.getString("STREET");
-      String city = accountResults.getString("CITY");
-      String province = accountResults.getString("PROVINCE");
-      String postalCode = accountResults.getString("POSTAL_CODE");
-      int driverAccount = accountResults.getInt("Driver account");
-      int passengerAccount = accountResults.getInt("Passenger Account");
-
-      System.out.printf("%-10s %-10s %-15s %-15s %s %s %s %s %s %d %d %n", firstName, lastName,
-          birthDate,
-          phoneNumber, email, street, city, province, postalCode, driverAccount, passengerAccount);
-
+        }
+      }
+      // catch(SQLException e){
+      //   return e;
+      // }
     }
     return accounts;
   }
