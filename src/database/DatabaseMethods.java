@@ -27,11 +27,12 @@ public class DatabaseMethods {
     ArrayList<Account> accounts = new ArrayList<Account>();
 
     // TODO: Implement
-    String accountQuery = "SELECT * FROM accounts";
+    String accountQuery = "SELECT  a.FIRST_NAME, a.LAST_NAME, a.BIRTHDATE, a.PHONE_NUMBER, a.EMAIL, ad.STREET, ad.CITY, ad.PROVINCE, ad.POSTAL_CODE, d.ID AS 'Driver account', p.ID AS 'Passenger Account' FROM accounts a LEFT Join addresses ad ON a.ADDRESS_ID = ad.ID LEFT JOIN drivers d ON a.ID = d.ID LEFT JOIN passengers p ON a.ID = p.ID";
     Statement stmt = conn.createStatement();
     ResultSet accountResults = stmt.executeQuery(accountQuery);
-    System.out.printf("%-10s %-10s %-15s %-15s %-10s %n", "FIRST_NAME", "LAST_NAME", "BIRTHDATE", "PHONE_NUMBER",
-        "EMAIL");
+    System.out.printf("%-10s %-10s %-15s %s %s %s %s %-10s %s %s %s %n", "FIRST_NAME", "LAST_NAME",
+        "BIRTHDATE", "PHONE_NUMBER",
+        "EMAIL", "STREET", "CITY", "PROVINCE", "POSTAL CODE", "DRIVER'S ACCOUNT", "PASSENGER ACCOUNT");
 
     while (accountResults.next()) {
       String firstName = accountResults.getString("FIRST_NAME");
@@ -39,8 +40,16 @@ public class DatabaseMethods {
       String birthDate = accountResults.getString("BIRTHDATE");
       String phoneNumber = accountResults.getString("PHONE_NUMBER");
       String email = accountResults.getString("EMAIL");
+      String street = accountResults.getString("STREET");
+      String city = accountResults.getString("CITY");
+      String province = accountResults.getString("PROVINCE");
+      String postalCode = accountResults.getString("POSTAL_CODE");
+      int driverAccount = accountResults.getInt("Driver account");
+      int passengerAccount = accountResults.getInt("Passenger Account");
 
-      System.out.printf("%-10s %-10s %-15s %-15s %-10s %n", firstName, lastName, birthDate, phoneNumber, email);
+      System.out.printf("%-10s %-10s %-15s %-15s %s %s %s %s %s %d %d %n", firstName, lastName,
+          birthDate,
+          phoneNumber, email, street, city, province, postalCode, driverAccount, passengerAccount);
 
     }
     return accounts;
