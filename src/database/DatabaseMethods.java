@@ -21,20 +21,36 @@ public class DatabaseMethods {
   /*
    * Accepts: Nothing
    * Behaviour: Retrieves information about all accounts
-   * Returns: List of account objects 
+   * Returns: List of account objects
    */
   public ArrayList<Account> getAllAccounts() throws SQLException {
     ArrayList<Account> accounts = new ArrayList<Account>();
 
     // TODO: Implement
+    String accountQuery = "SELECT * FROM accounts";
+    Statement stmt = conn.createStatement();
+    ResultSet accountResults = stmt.executeQuery(accountQuery);
+    System.out.printf("%-10s %-10s %-15s %-15s %-10s %n", "FIRST_NAME", "LAST_NAME", "BIRTHDATE", "PHONE_NUMBER",
+        "EMAIL");
 
+    while (accountResults.next()) {
+      String firstName = accountResults.getString("FIRST_NAME");
+      String lastName = accountResults.getString("LAST_NAME");
+      String birthDate = accountResults.getString("BIRTHDATE");
+      String phoneNumber = accountResults.getString("PHONE_NUMBER");
+      String email = accountResults.getString("EMAIL");
+
+      System.out.printf("%-10s %-10s %-15s %-15s %-10s %n", firstName, lastName, birthDate, phoneNumber, email);
+
+    }
     return accounts;
   }
 
   /*
    * Accepts: Email address of driver
-   * Behaviour: Calculates the average rating over all rides performed by the driver specified by the email address
-   * Returns: The average rating value 
+   * Behaviour: Calculates the average rating over all rides performed by the
+   * driver specified by the email address
+   * Returns: The average rating value
    */
   public double getAverageRatingForDriver(String driverEmail) throws SQLException {
     double averageRating = 0.0;
@@ -45,23 +61,27 @@ public class DatabaseMethods {
   }
 
   /*
-   * Accepts: Account details, and passenger and driver specific details. Passenger or driver details could be
+   * Accepts: Account details, and passenger and driver specific details.
+   * Passenger or driver details could be
    * null if account is only intended for one type of use.
    * Behaviour:
-   *  - Insert new account using information provided in Account object
-   *  - For non-null passenger/driver details, insert the associated data into the relevant tables
-   * Returns: Nothing 
+   * - Insert new account using information provided in Account object
+   * - For non-null passenger/driver details, insert the associated data into the
+   * relevant tables
+   * Returns: Nothing
    */
   public void createAccount(Account account, Passenger passenger, Driver driver) throws SQLException {
     // TODO: Implement
-    // Hint: Use the available insertAccount, insertPassenger, and insertDriver methods
+    // Hint: Use the available insertAccount, insertPassenger, and insertDriver
+    // methods
   }
 
   /*
    * Accepts: Account details (which includes address information)
-   * Behaviour: Inserts the new account, as well as the account's address if it doesn't already exist. The new/existing address should
+   * Behaviour: Inserts the new account, as well as the account's address if it
+   * doesn't already exist. The new/existing address should
    * be linked to the account
-   * Returns: Id of the new account 
+   * Returns: Id of the new account
    */
   public int insertAccount(Account account) throws SQLException {
     int accountId = -1;
@@ -73,9 +93,11 @@ public class DatabaseMethods {
   }
 
   /*
-   * Accepts: Passenger details (should not be null), and account id for the passenger
-   * Behaviour: Inserts the new passenger record, correctly linked to the account id
-   * Returns: Id of the new passenger 
+   * Accepts: Passenger details (should not be null), and account id for the
+   * passenger
+   * Behaviour: Inserts the new passenger record, correctly linked to the account
+   * id
+   * Returns: Id of the new passenger
    */
   public int insertPassenger(Passenger passenger, int accountId) throws SQLException {
     // TODO: Implement
@@ -85,8 +107,9 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Driver details (should not be null), and account id for the driver
-   * Behaviour: Inserts the new driver and driver's license record, correctly linked to the account id
-   * Returns: Id of the new driver 
+   * Behaviour: Inserts the new driver and driver's license record, correctly
+   * linked to the account id
+   * Returns: Id of the new driver
    */
   public int insertDriver(Driver driver, int accountId) throws SQLException {
     // TODO: Implement
@@ -109,10 +132,11 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Address details
-   * Behaviour: 
-   *  - Checks if an address with these properties already exists.
-   *  - If it does, gets the id of the existing address.
-   *  - If it does not exist, creates the address in the database, and gets the id of the new address
+   * Behaviour:
+   * - Checks if an address with these properties already exists.
+   * - If it does, gets the id of the existing address.
+   * - If it does not exist, creates the address in the database, and gets the id
+   * of the new address
    * Returns: Id of the address
    */
   public int insertAddressIfNotExists(Address address) throws SQLException {
@@ -124,8 +148,10 @@ public class DatabaseMethods {
   }
 
   /*
-   * Accepts: Name of new favourite destination, email address of the passenger, and the id of the address being favourited
-   * Behaviour: Finds the id of the passenger with the email address, then inserts the new favourite destination record
+   * Accepts: Name of new favourite destination, email address of the passenger,
+   * and the id of the address being favourited
+   * Behaviour: Finds the id of the passenger with the email address, then inserts
+   * the new favourite destination record
    * Returns: Nothing
    */
   public void insertFavouriteDestination(String favouriteName, String passengerEmail, int addressId)
@@ -156,7 +182,8 @@ public class DatabaseMethods {
   }
 
   /*
-   * Accepts: Email address of passenger making request, id of dropoff address, requested date/time of ride, and number of passengers
+   * Accepts: Email address of passenger making request, id of dropoff address,
+   * requested date/time of ride, and number of passengers
    * Behaviour: Inserts a new ride request, using the provided properties
    * Returns: Nothing
    */
@@ -170,7 +197,8 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Email address
-   * Behaviour: Gets id of passenger with specified email (assumes passenger exists)
+   * Behaviour: Gets id of passenger with specified email (assumes passenger
+   * exists)
    * Returns: Id
    */
   public int getPassengerIdFromEmail(String passengerEmail) throws SQLException {
@@ -194,7 +222,8 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Email address
-   * Behaviour: Gets the id of the address tied to the account with the provided email address
+   * Behaviour: Gets the id of the address tied to the account with the provided
+   * email address
    * Returns: Address id
    */
   public int getAccountAddressIdFromEmail(String email) throws SQLException {
@@ -206,7 +235,8 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Email address of passenger
-   * Behaviour: Gets a list of all the specified passenger's favourite destinations
+   * Behaviour: Gets a list of all the specified passenger's favourite
+   * destinations
    * Returns: List of favourite destinations
    */
   public ArrayList<FavouriteDestination> getFavouriteDestinationsForPassenger(String passengerEmail)
@@ -220,7 +250,8 @@ public class DatabaseMethods {
 
   /*
    * Accepts: Nothing
-   * Behaviour: Gets a list of all uncompleted ride requests (i.e. requests without an associated ride record)
+   * Behaviour: Gets a list of all uncompleted ride requests (i.e. requests
+   * without an associated ride record)
    * Returns: List of all uncompleted rides
    */
   public ArrayList<RideRequest> getUncompletedRideRequests() throws SQLException {
