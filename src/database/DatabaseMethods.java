@@ -26,7 +26,7 @@ public class DatabaseMethods {
   public ArrayList<Account> getAllAccounts() throws SQLException {
     ArrayList<Account> accounts = new ArrayList<Account>();
 
-    // TODO: Implement
+    // IMPLEMENTATION
     String accountQuery = "SELECT  a.FIRST_NAME, a.LAST_NAME, a.BIRTHDATE, a.PHONE_NUMBER, a.EMAIL, ad.STREET, ad.CITY, ad.PROVINCE, ad.POSTAL_CODE, d.ID AS 'Driver account', p.ID AS 'Passenger Account' FROM accounts a LEFT Join addresses ad ON a.ADDRESS_ID = ad.ID LEFT JOIN drivers d ON a.ID = d.ID LEFT JOIN passengers p ON a.ID = p.ID";
     try(Statement stmt = conn.createStatement();){
       try(ResultSet accountResults = stmt.executeQuery(accountQuery);){
@@ -62,7 +62,15 @@ public class DatabaseMethods {
     double averageRating = 0.0;
 
     // TODO: Implement
-
+    String query = "SELECT AVG(rides.RATING_FROM_PASSENGER) FROM accounts INNER JOIN rides ON rides.DRIVER_ID = accounts.ID WHERE accounts.EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, driverEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          averageRating = result.getDouble(1);
+        }
+      }
+    }
     return averageRating;
   }
 
