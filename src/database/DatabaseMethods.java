@@ -200,9 +200,19 @@ public class DatabaseMethods {
    * Returns: True if exists, false if not
    */
   public boolean checkPassengerExists(String email) throws SQLException {
-    // TODO: Implement
-
-    return true;
+      // IMPLEMENTATION
+      String query = "SELECT * FROM passengers INNER JOIN accounts ON passengers.ID = accounts.ID WHERE accounts.EMAIL = ?";
+      try(PreparedStatement stmt = conn.prepareStatement(query)){
+        stmt.setString(1, email);
+        try(ResultSet result = stmt.executeQuery()){
+          if(result.next()){
+            return true;
+          }
+          else{
+            return false;
+          }
+        }
+      }
   }
 
   /*
