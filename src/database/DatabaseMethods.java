@@ -61,7 +61,7 @@ public class DatabaseMethods {
   public double getAverageRatingForDriver(String driverEmail) throws SQLException {
     double averageRating = 0.0;
 
-    // TODO: Implement
+    // IMPLEMENTATION
     String query = "SELECT AVG(rides.RATING_FROM_PASSENGER) FROM accounts INNER JOIN rides ON rides.DRIVER_ID = accounts.ID WHERE accounts.EMAIL = ?";
     try(PreparedStatement stmt = conn.prepareStatement(query)){
       stmt.setString(1, driverEmail);
@@ -170,7 +170,27 @@ public class DatabaseMethods {
    */
   public void insertFavouriteDestination(String favouriteName, String passengerEmail, int addressId)
       throws SQLException {
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
+
+    // 1. Get passenger ID from email (Q: do we need to validate if it is a passenger?)
+    int passengerId = 0;
+    String query = "SELECT accounts.ID FROM accounts WHERE accounts.EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, passengerEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          passengerId = result.getInt(1);
+        }
+      }
+    }
+    // 2. Use ID and args to insert into the favourite_locations table
+    query = "INSERT INTO favourite_locations ('PASSENGER_ID', 'LOCATION_ID', 'NAME') VALUES (?, ?, ?)";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setInt(1, passengerId);
+      stmt.setInt(2, addressId);
+      stmt.setString(3, favouriteName);
+      stmt.executeUpdate(); // Q: do we need to handle the result of the update?
+    }
   }
 
   /*
