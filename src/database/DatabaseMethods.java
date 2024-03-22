@@ -173,10 +173,10 @@ public class DatabaseMethods {
             result.getString("PROVINCE"),
             result.getString("POSTAL_CODE")
           );
-          if((receivedAddress.getStreet().toLowerCase() == address.getStreet().toLowerCase())
-            && (receivedAddress.getCity().toLowerCase() == address.getCity().toLowerCase())
-            && (receivedAddress.getProvince().toLowerCase() == address.getProvince().toLowerCase())
-            && (receivedAddress.getPostalCode().toLowerCase() == address.getPostalCode().toLowerCase())
+          if((receivedAddress.getStreet().toLowerCase().equals(address.getStreet().toLowerCase()))
+            && (receivedAddress.getCity().toLowerCase().equals(address.getCity().toLowerCase()))
+            && (receivedAddress.getProvince().toLowerCase().equals(address.getProvince().toLowerCase()))
+            && (receivedAddress.getPostalCode().toLowerCase().equals(address.getPostalCode().toLowerCase()))
             ){
               // 1.b If if does, return the id
               return receivedAddress.getId();
@@ -341,8 +341,17 @@ public class DatabaseMethods {
       throws SQLException {
     ArrayList<FavouriteDestination> favouriteDestinations = new ArrayList<FavouriteDestination>();
 
-    // TODO: Implement
-
+    // TODO: TEST IMPLEMENTATION
+    String query = "SELECT favourite_locations.NAME, addresses.ID, addresses.STREET, addresses.CITY, addresses.PROVINCE, addresses.POSTAL_CODE FROM passengers INNER JOIN accounts ON accounts.ID = passengers.ID INNER JOIN favourite_locations ON passengers.ID = favourite_locations.PASSENGER_ID INNER JOIN addresses ON favourite_locations.LOCATION_ID = addresses.ID WHERE accounts.EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, passengerEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          FavouriteDestination favDest = new FavouriteDestination(result.getString("NAME"), result.getInt("ID"), result.getString("STREET"), result.getString("CITY"), result.getString("PROVINCE"), result.getString("POSTAL_CODE"));
+          favouriteDestinations.add(favDest);
+        }
+      }
+    }
     return favouriteDestinations;
   }
 
