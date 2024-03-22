@@ -1,5 +1,5 @@
 /*
- * Group members: YOUR NAMES HERE
+ * Group members: Irina Ignatenok, Livio Reinoso
  * Instructions: For Project 2, implement all methods in this class, and test to confirm they behave as expected when the program is run.
  */
 
@@ -41,25 +41,10 @@ public class DatabaseMethods {
           String city = accountResults.getString("CITY");
           String province = accountResults.getString("PROVINCE");
           String postalCode = accountResults.getString("POSTAL_CODE");
-          boolean driver;
-          boolean passenger;
+          boolean isDriver = accountResults.getInt("Driver account") == 0 ? false : true ;
+          boolean isPassenger = accountResults.getInt("Passenger Account") == 0 ? false : true;
           
-          int driverAccount = accountResults.getInt("Driver account");
-          int passengerAccount = accountResults.getInt("Passenger Account");
-    
-          if(driverAccount == 0){
-            driver = false;
-          }
-          else{
-            driver = true;
-          }
-          if(passengerAccount == 0){
-            passenger = false;
-          }
-          else {
-            passenger = true;
-          }
-          Account acc = new Account(firstName, lastName, street, city, province, postalCode, phoneNumber, email, birthDate, passenger, driver);
+          Account acc = new Account(firstName, lastName, street, city, province, postalCode, phoneNumber, email, birthDate, isPassenger, isDriver);
           accounts.add(acc);
         }
       }
