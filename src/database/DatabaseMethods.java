@@ -28,8 +28,8 @@ public class DatabaseMethods {
 
     // IMPLEMENTATION
     String accountQuery = "SELECT  a.FIRST_NAME, a.LAST_NAME, a.BIRTHDATE, a.PHONE_NUMBER, a.EMAIL, ad.STREET, ad.CITY, ad.PROVINCE, ad.POSTAL_CODE, d.ID AS 'Driver account', p.ID AS 'Passenger Account' FROM accounts a LEFT Join addresses ad ON a.ADDRESS_ID = ad.ID LEFT JOIN drivers d ON a.ID = d.ID LEFT JOIN passengers p ON a.ID = p.ID";
-    try(Statement stmt = conn.createStatement();){
-      try(ResultSet accountResults = stmt.executeQuery(accountQuery);){
+    try (Statement stmt = conn.createStatement();) {
+      try (ResultSet accountResults = stmt.executeQuery(accountQuery);) {
 
         while (accountResults.next()) {
           String firstName = accountResults.getString("FIRST_NAME");
@@ -41,10 +41,11 @@ public class DatabaseMethods {
           String city = accountResults.getString("CITY");
           String province = accountResults.getString("PROVINCE");
           String postalCode = accountResults.getString("POSTAL_CODE");
-          boolean isDriver = accountResults.getInt("Driver account") == 0 ? false : true ;
+          boolean isDriver = accountResults.getInt("Driver account") == 0 ? false : true;
           boolean isPassenger = accountResults.getInt("Passenger Account") == 0 ? false : true;
-          
-          Account acc = new Account(firstName, lastName, street, city, province, postalCode, phoneNumber, email, birthDate, isPassenger, isDriver);
+
+          Account acc = new Account(firstName, lastName, street, city, province, postalCode, phoneNumber, email,
+              birthDate, isPassenger, isDriver);
           accounts.add(acc);
         }
       }
@@ -63,10 +64,10 @@ public class DatabaseMethods {
 
     // TODO: Implement
     String query = "SELECT AVG(rides.RATING_FROM_PASSENGER) FROM accounts INNER JOIN rides ON rides.DRIVER_ID = accounts.ID WHERE accounts.EMAIL = ?";
-    try(PreparedStatement stmt = conn.prepareStatement(query)){
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, driverEmail);
-      try(ResultSet result = stmt.executeQuery()){
-        while(result.next()){
+      try (ResultSet result = stmt.executeQuery()) {
+        while (result.next()) {
           averageRating = result.getDouble(1);
         }
       }
@@ -140,7 +141,17 @@ public class DatabaseMethods {
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
     // TODO: Implement
-
+    String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?.?)";
+    try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
+      stmt.setString(1, licenseNumber);
+      stmt.setString(2, licenseExpiry);
+      stmt.executeUpdate();
+      try (ResultSet keys = stmt.getGeneratedKeys()) {
+        keys.next();
+        licenseId = keys.getInt(1);
+      }
+      ;
+    }
     return licenseId;
   }
 
@@ -181,13 +192,12 @@ public class DatabaseMethods {
   public boolean checkDriverExists(String email) throws SQLException {
     // IMPLEMENTATION
     String query = "SELECT * FROM drivers INNER JOIN accounts ON drivers.ID = accounts.ID WHERE accounts.EMAIL = ?";
-    try(PreparedStatement stmt = conn.prepareStatement(query)){
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, email);
-      try(ResultSet result = stmt.executeQuery()){
-        if(result.next()){
+      try (ResultSet result = stmt.executeQuery()) {
+        if (result.next()) {
           return true;
-        }
-        else{
+        } else {
           return false;
         }
       }
@@ -200,19 +210,18 @@ public class DatabaseMethods {
    * Returns: True if exists, false if not
    */
   public boolean checkPassengerExists(String email) throws SQLException {
-      // IMPLEMENTATION
-      String query = "SELECT * FROM passengers INNER JOIN accounts ON passengers.ID = accounts.ID WHERE accounts.EMAIL = ?";
-      try(PreparedStatement stmt = conn.prepareStatement(query)){
-        stmt.setString(1, email);
-        try(ResultSet result = stmt.executeQuery()){
-          if(result.next()){
-            return true;
-          }
-          else{
-            return false;
-          }
+    // IMPLEMENTATION
+    String query = "SELECT * FROM passengers INNER JOIN accounts ON passengers.ID = accounts.ID WHERE accounts.EMAIL = ?";
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      stmt.setString(1, email);
+      try (ResultSet result = stmt.executeQuery()) {
+        if (result.next()) {
+          return true;
+        } else {
+          return false;
         }
       }
+    }
   }
 
   /*
