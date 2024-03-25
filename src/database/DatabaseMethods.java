@@ -126,9 +126,16 @@ public class DatabaseMethods {
    * Returns: Id of the new driver
    */
   public int insertDriver(Driver driver, int accountId) throws SQLException {
-    // TODO: Implement
+    // TODO: TESTING
     // Hint: Use the insertLicense method
-
+    int licenseId = insertLicense(driver.getLicenseNumber(), driver.getLicenseExpiryDate());
+    String query = "INSERT INTO drivers values (?, ?)";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setInt(1, accountId);
+      stmt.setInt(2,licenseId);
+      stmt.executeUpdate();
+      // Since we're not changing the accountId value when inserting it into the drivers table, we don't need to retrieve the inserted keys
+    }
     return accountId;
   }
 
