@@ -9,11 +9,11 @@
 | ----------- | ----------- | ----------- | ----------- |
 | getAllAccounts | X | X | X |
 | getAverageRatingForDriver | X | X | X |
-| createAccount |  |  |  |
+| createAccount | X | X |  |
 | insertAccount |  |  |  |
-| insertPassenger |  |  |  |
-| insertDriver |  |  |  |
-| insertLicense |  |  |  |
+| insertPassenger | X | X |  |
+| insertDriver | X | X |  |
+| insertLicense | X | X |  |
 | insertAddressIfNotExists | X | X |  |
 | insertFavouriteDestination | X | X |  |
 | checkDriverExists | X | X | X |

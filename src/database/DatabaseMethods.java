@@ -127,7 +127,7 @@ public class DatabaseMethods {
    * Returns: Id of the new passenger
    */
   public int insertPassenger(Passenger passenger, int accountId) throws SQLException {
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
     String query = "INSERT INTO passenger VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setInt(1, accountId);
