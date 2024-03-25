@@ -140,7 +140,17 @@ public class DatabaseMethods {
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
     // TODO: Implement
-
+    String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?.?)";
+    try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
+      stmt.setString(1, licenseNumber);
+      stmt.setString(2, licenseExpiry);
+      stmt.executeUpdate();
+      try (ResultSet keys = stmt.getGeneratedKeys()) {
+        keys.next();
+        licenseId = keys.getInt(1);
+      }
+      ;
+    }
     return licenseId;
   }
 
