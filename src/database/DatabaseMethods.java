@@ -85,9 +85,21 @@ public class DatabaseMethods {
    * Returns: Nothing
    */
   public void createAccount(Account account, Passenger passenger, Driver driver) throws SQLException {
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
     // Hint: Use the available insertAccount, insertPassenger, and insertDriver
     // methods
+
+    // Inserting a new account into the accounts table. I retrieve its account ID after that
+    int accountId = insertAccount(account);
+
+    // If the account is for a passenger, I insert it into the passengers table as well, providing the credit card info through the instance of the passenger class and the accountId that I've received from the insertAccount method
+    if(account.isPassenger()){
+      insertPassenger(passenger, accountId);
+    }
+    // Same here for a new driver's account
+    if(account.isDriver()){
+      insertDriver(driver, accountId);
+    }
   }
 
   /*
