@@ -86,9 +86,21 @@ public class DatabaseMethods {
    * Returns: Nothing
    */
   public void createAccount(Account account, Passenger passenger, Driver driver) throws SQLException {
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
     // Hint: Use the available insertAccount, insertPassenger, and insertDriver
     // methods
+
+    // Inserting a new account into the accounts table. I retrieve its account ID after that
+    int accountId = insertAccount(account);
+
+    // If the account is for a passenger, I insert it into the passengers table as well, providing the credit card info through the instance of the passenger class and the accountId that I've received from the insertAccount method
+    if(account.isPassenger()){
+      insertPassenger(passenger, accountId);
+    }
+    // Same here for a new driver's account
+    if(account.isDriver()){
+      insertDriver(driver, accountId);
+    }
   }
 
   /*
@@ -116,7 +128,12 @@ public class DatabaseMethods {
    */
   public int insertPassenger(Passenger passenger, int accountId) throws SQLException {
     // TODO: Implement
-
+    String query = "INSERT INTO passenger VALUES (?,?)";
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      stmt.setInt(1, accountId);
+      stmt.setString(2, passenger.getCreditCardNumber());
+      stmt.executeUpdate();
+    }
     return accountId;
   }
 
@@ -127,9 +144,17 @@ public class DatabaseMethods {
    * Returns: Id of the new driver
    */
   public int insertDriver(Driver driver, int accountId) throws SQLException {
-    // TODO: Implement
+    // TODO: TESTING
     // Hint: Use the insertLicense method
-
+    int licenseId = insertLicense(driver.getLicenseNumber(), driver.getLicenseExpiryDate());
+    String query = "INSERT INTO drivers values (?, ?)";
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      stmt.setInt(1, accountId);
+      stmt.setInt(2, licenseId);
+      stmt.executeUpdate();
+      // Since we're not changing the accountId value when inserting it into the
+      // drivers table, we don't need to retrieve the inserted keys
+    }
     return accountId;
   }
 
@@ -141,7 +166,7 @@ public class DatabaseMethods {
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
     // TODO: Implement
-    String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?.?)";
+    String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, licenseNumber);
       stmt.setString(2, licenseExpiry);
@@ -230,17 +255,17 @@ public class DatabaseMethods {
     // 1. Get passenger ID from email (Q: do we need to validate if it is a passenger?)
     int passengerId = -1;
     String query = "SELECT accounts.ID FROM accounts WHERE accounts.EMAIL = ?";
-    try(PreparedStatement stmt = conn.prepareStatement(query)){
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, passengerEmail);
-      try(ResultSet result = stmt.executeQuery()){
-        while(result.next()){
+      try (ResultSet result = stmt.executeQuery()) {
+        while (result.next()) {
           passengerId = result.getInt(1);
         }
       }
     }
     // 2. Use ID and args to insert into the favourite_locations table
     query = "INSERT INTO favourite_locations ('PASSENGER_ID', 'LOCATION_ID', 'NAME') VALUES (?, ?, ?)";
-    try(PreparedStatement stmt = conn.prepareStatement(query)){
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setInt(1, passengerId);
       stmt.setInt(2, addressId);
       stmt.setString(3, favouriteName);
