@@ -62,7 +62,7 @@ public class DatabaseMethods {
   public double getAverageRatingForDriver(String driverEmail) throws SQLException {
     double averageRating = 0.0;
 
-    // TODO: Implement
+    // IMPLEMENTATION
     String query = "SELECT AVG(rides.RATING_FROM_PASSENGER) FROM accounts INNER JOIN rides ON rides.DRIVER_ID = accounts.ID WHERE accounts.EMAIL = ?";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, driverEmail);
@@ -167,8 +167,52 @@ public class DatabaseMethods {
   public int insertAddressIfNotExists(Address address) throws SQLException {
     int addressId = -1;
 
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
 
+    // 1. Get addresses and check if the Address received as an argument exists in the list
+    // NOTE: the received address will not have an ID assigned
+
+    // Q: I'm going through the whole list so I can make sure that I don't miss and address due to casing. Is this verification required or can we just SELECT a.ID FROM addresses a WHERE 1 && 2 && 3 && 4... ?
+    String query = "SELECT * FROM addresses";
+    try(Statement stmt = conn.createStatement()){
+      try(ResultSet result = stmt.executeQuery(query)){
+        while(result.next()){
+          Address receivedAddress = new Address(
+            result.getInt("ID"),
+            result.getString("STREET"),
+            result.getString("CITY"),
+            result.getString("PROVINCE"),
+            result.getString("POSTAL_CODE")
+          );
+          if((receivedAddress.getStreet().toLowerCase().equals(address.getStreet().toLowerCase()))
+            && (receivedAddress.getCity().toLowerCase().equals(address.getCity().toLowerCase()))
+            && (receivedAddress.getProvince().toLowerCase().equals(address.getProvince().toLowerCase()))
+            && (receivedAddress.getPostalCode().toLowerCase().equals(address.getPostalCode().toLowerCase()))
+            ){
+              // 1.b If if does, return the id
+              return receivedAddress.getId();
+            }
+        }
+      }
+    }
+    // If I reach this line of code means that the address was not previously entered into the addresses table
+    // 2. If the Address does not exists
+    // 2.a Create the address in the table
+    query = "INSERT INTO addresses ('STREET', 'CITY', 'PROVINCE', 'POSTAL_CODE') values (?, ?, ?, ?)";
+    // Adding a second parameter to the prepareStatement method call to get the generated keys on the PreparedStatement object after executing the update
+    try(PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+      stmt.setString(1, address.getStreet());
+      stmt.setString(2, address.getCity());
+      stmt.setString(3, address.getProvince());
+      stmt.setString(4, address.getPostalCode());
+      stmt.executeUpdate();
+      // 2.b Return the AddressID
+      try(ResultSet addedId = stmt.getGeneratedKeys()){
+        while(addedId.next()){
+          return addedId.getInt(1);
+        }
+      }
+    }
     return addressId;
   }
 
@@ -181,7 +225,27 @@ public class DatabaseMethods {
    */
   public void insertFavouriteDestination(String favouriteName, String passengerEmail, int addressId)
       throws SQLException {
-    // TODO: Implement
+    // TODO: TEST IMPLEMENTATION
+
+    // 1. Get passenger ID from email (Q: do we need to validate if it is a passenger?)
+    int passengerId = -1;
+    String query = "SELECT accounts.ID FROM accounts WHERE accounts.EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, passengerEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          passengerId = result.getInt(1);
+        }
+      }
+    }
+    // 2. Use ID and args to insert into the favourite_locations table
+    query = "INSERT INTO favourite_locations ('PASSENGER_ID', 'LOCATION_ID', 'NAME') VALUES (?, ?, ?)";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setInt(1, passengerId);
+      stmt.setInt(2, addressId);
+      stmt.setString(3, favouriteName);
+      stmt.executeUpdate(); // Q: do we need to handle the result of the update?
+    }
   }
 
   /*
@@ -286,8 +350,17 @@ public class DatabaseMethods {
       throws SQLException {
     ArrayList<FavouriteDestination> favouriteDestinations = new ArrayList<FavouriteDestination>();
 
-    // TODO: Implement
-
+    // TODO: TEST IMPLEMENTATION
+    String query = "SELECT favourite_locations.NAME, addresses.ID, addresses.STREET, addresses.CITY, addresses.PROVINCE, addresses.POSTAL_CODE FROM passengers INNER JOIN accounts ON accounts.ID = passengers.ID INNER JOIN favourite_locations ON passengers.ID = favourite_locations.PASSENGER_ID INNER JOIN addresses ON favourite_locations.LOCATION_ID = addresses.ID WHERE accounts.EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, passengerEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          FavouriteDestination favDest = new FavouriteDestination(result.getString("NAME"), result.getInt("ID"), result.getString("STREET"), result.getString("CITY"), result.getString("PROVINCE"), result.getString("POSTAL_CODE"));
+          favouriteDestinations.add(favDest);
+        }
+      }
+    }
     return favouriteDestinations;
   }
 
