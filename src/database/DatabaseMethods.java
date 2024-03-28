@@ -116,13 +116,14 @@ public class DatabaseMethods {
   public int insertAccount(Account account) throws SQLException {
     int accountId = -1;
 
-    // TODO: Implement
+    // TODO: TESTING
     // Hint: Use the insertAddressIfNotExists method
-    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL')";
-    try (PreparedStatement stmt = conn.prepareStatement((query))) {
+    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL') values (?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, account.getFirstName());
       stmt.setString(2, account.getLastName());
       stmt.setString(3, account.getBirthdate());
+      stmt.setInt(4, insertAddressIfNotExists(account.getAddress()));
       stmt.setString(5, account.getPhoneNumber());
       stmt.setString(6, account.getEmail());
       stmt.executeUpdate();
@@ -132,7 +133,6 @@ public class DatabaseMethods {
         }
       }
     }
-    insertAddressIfNotExists(account.getAddress());
     return accountId;
   }
 
@@ -182,7 +182,7 @@ public class DatabaseMethods {
    */
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
-    // TODO: Implement
+    // TODO: TESTING
     String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, licenseNumber);
