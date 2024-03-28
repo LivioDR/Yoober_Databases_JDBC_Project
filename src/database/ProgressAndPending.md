@@ -23,7 +23,7 @@
 | getDriverIdFromEmail | X | X |  |
 | getAccountAddressIdFromEmail | X | X |  |
 | getFavouriteDestinationsForPassenger | X | X |  |
-| getUncompletedRideRequests |  |  |  |
+| getUncompletedRideRequests | X |  |  |
 | insertRide |  |  |  |
 ---
 ## Questions about implementation

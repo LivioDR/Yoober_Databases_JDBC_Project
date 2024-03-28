@@ -446,6 +446,22 @@ public class DatabaseMethods {
     ArrayList<RideRequest> uncompletedRideRequests = new ArrayList<RideRequest>();
 
     // TODO: Implement
+    String query = "SELECT ride_requests.*, accounts.*, pickup.*, dropoff.* FROM ride_requests INNER JOIN accounts ON accounts.ID = ride_requests.PASSENGER_ID INNER JOIN addresses pickup ON pickup.ID = ride_requests.PICKUP_LOCATION_ID INNER JOIN addresses dropoff ON dropoff.ID = ride_requests.DROPOFF_LOCATION_ID LEFT JOIN rides ON rides.REQUEST_ID = ride_requests.ID  WHERE rides.ID IS NULL";
+    try(Statement stmt = conn.createStatement()){
+      try(ResultSet result = stmt.executeQuery(query)){
+        while(result.next()){
+          RideRequest req = new RideRequest(result.getInt(1),
+                                            result.getString("FIRST_NAME") , 
+                                            result.getString("LAST_NAME"), 
+                                            result.getString(16), 
+                                            result.getString(17), 
+                                            result.getString(21), 
+                                            result.getString(22), 
+                                            result.getString("PICKUP_DATE"), 
+                                            result.getString("PICKUP_TIME"));
+        }
+      }
+    }
 
     return uncompletedRideRequests;
   }
