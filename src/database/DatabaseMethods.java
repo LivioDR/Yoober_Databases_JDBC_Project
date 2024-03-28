@@ -90,15 +90,18 @@ public class DatabaseMethods {
     // Hint: Use the available insertAccount, insertPassenger, and insertDriver
     // methods
 
-    // Inserting a new account into the accounts table. I retrieve its account ID after that
+    // Inserting a new account into the accounts table. I retrieve its account ID
+    // after that
     int accountId = insertAccount(account);
 
-    // If the account is for a passenger, I insert it into the passengers table as well, providing the credit card info through the instance of the passenger class and the accountId that I've received from the insertAccount method
-    if(account.isPassenger()){
+    // If the account is for a passenger, I insert it into the passengers table as
+    // well, providing the credit card info through the instance of the passenger
+    // class and the accountId that I've received from the insertAccount method
+    if (account.isPassenger()) {
       insertPassenger(passenger, accountId);
     }
     // Same here for a new driver's account
-    if(account.isDriver()){
+    if (account.isDriver()) {
       insertDriver(driver, accountId);
     }
   }
@@ -115,7 +118,21 @@ public class DatabaseMethods {
 
     // TODO: Implement
     // Hint: Use the insertAddressIfNotExists method
-
+    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL')";
+    try (PreparedStatement stmt = conn.prepareStatement((query))) {
+      stmt.setString(1, account.getFirstName());
+      stmt.setString(2, account.getLastName());
+      stmt.setString(3, account.getBirthdate());
+      stmt.setString(5, account.getPhoneNumber());
+      stmt.setString(6, account.getEmail());
+      stmt.executeUpdate();
+      try (ResultSet keys = stmt.getGeneratedKeys()) {
+        while (keys.next()) {
+          accountId = keys.getInt(1);
+        }
+      }
+    }
+    insertAddressIfNotExists(account.getAddress());
     return accountId;
   }
 
