@@ -10,7 +10,7 @@
 | getAllAccounts | X | X | X |
 | getAverageRatingForDriver | X | X | X |
 | createAccount | X | X |  |
-| insertAccount |  |  |  |
+| insertAccount | X | X |  |
 | insertPassenger | X | X |  |
 | insertDriver | X | X |  |
 | insertLicense | X | X |  |
