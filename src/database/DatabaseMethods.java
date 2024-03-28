@@ -90,15 +90,18 @@ public class DatabaseMethods {
     // Hint: Use the available insertAccount, insertPassenger, and insertDriver
     // methods
 
-    // Inserting a new account into the accounts table. I retrieve its account ID after that
+    // Inserting a new account into the accounts table. I retrieve its account ID
+    // after that
     int accountId = insertAccount(account);
 
-    // If the account is for a passenger, I insert it into the passengers table as well, providing the credit card info through the instance of the passenger class and the accountId that I've received from the insertAccount method
-    if(account.isPassenger()){
+    // If the account is for a passenger, I insert it into the passengers table as
+    // well, providing the credit card info through the instance of the passenger
+    // class and the accountId that I've received from the insertAccount method
+    if (account.isPassenger()) {
       insertPassenger(passenger, accountId);
     }
     // Same here for a new driver's account
-    if(account.isDriver()){
+    if (account.isDriver()) {
       insertDriver(driver, accountId);
     }
   }
@@ -115,7 +118,21 @@ public class DatabaseMethods {
 
     // TODO: Implement
     // Hint: Use the insertAddressIfNotExists method
-
+    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL')";
+    try (PreparedStatement stmt = conn.prepareStatement((query))) {
+      stmt.setString(1, account.getFirstName());
+      stmt.setString(2, account.getLastName());
+      stmt.setString(3, account.getBirthdate());
+      stmt.setString(5, account.getPhoneNumber());
+      stmt.setString(6, account.getEmail());
+      stmt.executeUpdate();
+      try (ResultSet keys = stmt.getGeneratedKeys()) {
+        while (keys.next()) {
+          accountId = keys.getInt(1);
+        }
+      }
+    }
+    insertAddressIfNotExists(account.getAddress());
     return accountId;
   }
 
@@ -194,46 +211,49 @@ public class DatabaseMethods {
 
     // TODO: TEST IMPLEMENTATION
 
-    // 1. Get addresses and check if the Address received as an argument exists in the list
+    // 1. Get addresses and check if the Address received as an argument exists in
+    // the list
     // NOTE: the received address will not have an ID assigned
 
-    // Q: I'm going through the whole list so I can make sure that I don't miss and address due to casing. Is this verification required or can we just SELECT a.ID FROM addresses a WHERE 1 && 2 && 3 && 4... ?
+    // Q: I'm going through the whole list so I can make sure that I don't miss and
+    // address due to casing. Is this verification required or can we just SELECT
+    // a.ID FROM addresses a WHERE 1 && 2 && 3 && 4... ?
     String query = "SELECT * FROM addresses";
-    try(Statement stmt = conn.createStatement()){
-      try(ResultSet result = stmt.executeQuery(query)){
-        while(result.next()){
+    try (Statement stmt = conn.createStatement()) {
+      try (ResultSet result = stmt.executeQuery(query)) {
+        while (result.next()) {
           Address receivedAddress = new Address(
-            result.getInt("ID"),
-            result.getString("STREET"),
-            result.getString("CITY"),
-            result.getString("PROVINCE"),
-            result.getString("POSTAL_CODE")
-          );
-          if((receivedAddress.getStreet().toLowerCase().equals(address.getStreet().toLowerCase()))
-            && (receivedAddress.getCity().toLowerCase().equals(address.getCity().toLowerCase()))
-            && (receivedAddress.getProvince().toLowerCase().equals(address.getProvince().toLowerCase()))
-            && (receivedAddress.getPostalCode().toLowerCase().equals(address.getPostalCode().toLowerCase()))
-            ){
-              // 1.b If if does, return the id
-              return receivedAddress.getId();
-            }
+              result.getInt("ID"),
+              result.getString("STREET"),
+              result.getString("CITY"),
+              result.getString("PROVINCE"),
+              result.getString("POSTAL_CODE"));
+          if ((receivedAddress.getStreet().toLowerCase().equals(address.getStreet().toLowerCase()))
+              && (receivedAddress.getCity().toLowerCase().equals(address.getCity().toLowerCase()))
+              && (receivedAddress.getProvince().toLowerCase().equals(address.getProvince().toLowerCase()))
+              && (receivedAddress.getPostalCode().toLowerCase().equals(address.getPostalCode().toLowerCase()))) {
+            // 1.b If if does, return the id
+            return receivedAddress.getId();
+          }
         }
       }
     }
-    // If I reach this line of code means that the address was not previously entered into the addresses table
+    // If I reach this line of code means that the address was not previously
+    // entered into the addresses table
     // 2. If the Address does not exists
     // 2.a Create the address in the table
     query = "INSERT INTO addresses ('STREET', 'CITY', 'PROVINCE', 'POSTAL_CODE') values (?, ?, ?, ?)";
-    // Adding a second parameter to the prepareStatement method call to get the generated keys on the PreparedStatement object after executing the update
-    try(PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+    // Adding a second parameter to the prepareStatement method call to get the
+    // generated keys on the PreparedStatement object after executing the update
+    try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, address.getStreet());
       stmt.setString(2, address.getCity());
       stmt.setString(3, address.getProvince());
       stmt.setString(4, address.getPostalCode());
       stmt.executeUpdate();
       // 2.b Return the AddressID
-      try(ResultSet addedId = stmt.getGeneratedKeys()){
-        while(addedId.next()){
+      try (ResultSet addedId = stmt.getGeneratedKeys()) {
+        while (addedId.next()) {
           return addedId.getInt(1);
         }
       }
@@ -252,7 +272,8 @@ public class DatabaseMethods {
       throws SQLException {
     // TODO: TEST IMPLEMENTATION
 
-    // 1. Get passenger ID from email (Q: do we need to validate if it is a passenger?)
+    // 1. Get passenger ID from email (Q: do we need to validate if it is a
+    // passenger?)
     int passengerId = -1;
     String query = "SELECT accounts.ID FROM accounts WHERE accounts.EMAIL = ?";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -377,11 +398,13 @@ public class DatabaseMethods {
 
     // TODO: TEST IMPLEMENTATION
     String query = "SELECT favourite_locations.NAME, addresses.ID, addresses.STREET, addresses.CITY, addresses.PROVINCE, addresses.POSTAL_CODE FROM passengers INNER JOIN accounts ON accounts.ID = passengers.ID INNER JOIN favourite_locations ON passengers.ID = favourite_locations.PASSENGER_ID INNER JOIN addresses ON favourite_locations.LOCATION_ID = addresses.ID WHERE accounts.EMAIL = ?";
-    try(PreparedStatement stmt = conn.prepareStatement(query)){
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, passengerEmail);
-      try(ResultSet result = stmt.executeQuery()){
-        while(result.next()){
-          FavouriteDestination favDest = new FavouriteDestination(result.getString("NAME"), result.getInt("ID"), result.getString("STREET"), result.getString("CITY"), result.getString("PROVINCE"), result.getString("POSTAL_CODE"));
+      try (ResultSet result = stmt.executeQuery()) {
+        while (result.next()) {
+          FavouriteDestination favDest = new FavouriteDestination(result.getString("NAME"), result.getInt("ID"),
+              result.getString("STREET"), result.getString("CITY"), result.getString("PROVINCE"),
+              result.getString("POSTAL_CODE"));
           favouriteDestinations.add(favDest);
         }
       }
