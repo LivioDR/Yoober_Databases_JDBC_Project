@@ -116,7 +116,7 @@ public class DatabaseMethods {
   public int insertAccount(Account account) throws SQLException {
     int accountId = -1;
 
-    // TODO: TESTING
+    // TODO: TEST IMPLEMENTATION
     // Hint: Use the insertAddressIfNotExists method
     String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL') values (?, ?, ?, ?, ?, ?)";
     try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -161,7 +161,7 @@ public class DatabaseMethods {
    * Returns: Id of the new driver
    */
   public int insertDriver(Driver driver, int accountId) throws SQLException {
-    // TODO: TESTING
+    // TODO: TEST IMPLEMENTATION
     // Hint: Use the insertLicense method
     int licenseId = insertLicense(driver.getLicenseNumber(), driver.getLicenseExpiryDate());
     String query = "INSERT INTO drivers values (?, ?)";
@@ -182,7 +182,7 @@ public class DatabaseMethods {
    */
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
-    // TODO: TESTING
+    // TODO: TEST IMPLEMENTATION
     String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, licenseNumber);
@@ -356,8 +356,16 @@ public class DatabaseMethods {
    */
   public int getPassengerIdFromEmail(String passengerEmail) throws SQLException {
     int passengerId = -1;
-    // TODO: Implement
-
+    // TODO: TEST IMPLEMENTATION
+    String query = "SELECT ID from accounts WHERE EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, passengerEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          passengerId = result.getInt(1);
+        }
+      }
+    }
     return passengerId;
   }
 
@@ -368,8 +376,16 @@ public class DatabaseMethods {
    */
   public int getDriverIdFromEmail(String driverEmail) throws SQLException {
     int driverId = -1;
-    // TODO: Implement
-
+    // TODO: TEST IMPLEMENTATION
+    String query = "SELECT ID from accounts WHERE EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, driverEmail);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          driverId = result.getInt(1);
+        }
+      }
+    }
     return driverId;
   }
 
@@ -381,8 +397,16 @@ public class DatabaseMethods {
    */
   public int getAccountAddressIdFromEmail(String email) throws SQLException {
     int addressId = -1;
-    // TODO: Implement
-
+    // TODO: TEST IMPLEMENTATION
+    String query = "SELECT ADDRESS_ID from accounts WHERE EMAIL = ?";
+    try(PreparedStatement stmt = conn.prepareStatement(query)){
+      stmt.setString(1, email);
+      try(ResultSet result = stmt.executeQuery()){
+        while(result.next()){
+          addressId = result.getInt(1);
+        }
+      }
+    }
     return addressId;
   }
 

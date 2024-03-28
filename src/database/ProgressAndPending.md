@@ -19,16 +19,16 @@
 | checkDriverExists | X | X | X |
 | checkPassengerExists | X | X | X |
 | insertRideRequest |  |  |  |
-| getPassengerIdFromEmail |  |  |  |
-| getDriverIdFromEmail |  |  |  |
-| getAccountAddressIdFromEmail |  |  |  |
+| getPassengerIdFromEmail | X | X |  |
+| getDriverIdFromEmail | X | X |  |
+| getAccountAddressIdFromEmail | X | X |  |
 | getFavouriteDestinationsForPassenger | X | X |  |
 | getUncompletedRideRequests |  |  |  |
 | insertRide |  |  |  |
 ---
 ## Questions about implementation
 ### insertAddressIfNotExists
-- Q: I'm going through the whole list so I can make sure that I don't miss and address due to casing. Is this verification required or can we just SELECT a.ID FROM addresses a WHERE 1 && 2 && 3 && 4... ?
+- Q: We go through the whole list so we can make sure that we don't miss and address due to casing. Is this verification required or can we just SELECT a.ID FROM addresses a WHERE 1 && 2 && 3 && 4... ?
 ### insertFavouriteDestination
 - Q: do we need to validate if the received ID is a passenger?
 - Q: when we insert a new destination, do we need to handle the result of the insert query?
