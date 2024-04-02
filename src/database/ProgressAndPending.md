@@ -18,13 +18,13 @@
 | insertFavouriteDestination | X | X |  |
 | checkDriverExists | X | X | X |
 | checkPassengerExists | X | X | X |
-| insertRideRequest |  |  |  |
+| insertRideRequest | X | X |  |
 | getPassengerIdFromEmail | X | X |  |
 | getDriverIdFromEmail | X | X |  |
 | getAccountAddressIdFromEmail | X | X |  |
 | getFavouriteDestinationsForPassenger | X | X |  |
 | getUncompletedRideRequests | X | X |  |
-| insertRide |  |  |  |
+| insertRide | X | X |  |
 ---
 ## Questions about implementation
 ### insertAddressIfNotExists
