@@ -145,7 +145,7 @@ public class DatabaseMethods {
    */
   public int insertPassenger(Passenger passenger, int accountId) throws SQLException {
     // TODO: TEST IMPLEMENTATION
-    String query = "INSERT INTO passenger VALUES (?,?)";
+    String query = "INSERT INTO passengers VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setInt(1, accountId);
       stmt.setString(2, passenger.getCreditCardNumber());
