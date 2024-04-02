@@ -346,6 +346,22 @@ public class DatabaseMethods {
     int pickupAddressId = this.getAccountAddressIdFromEmail(passengerEmail);
 
     // TODO: Implement
+
+    String query = "INSERT INTO ride_requests('PASSENGER_ID','PICKUP_LOCATION_ID','PICKUP_DATE','PICKUP_TIME','NUMBER_OF_RIDERS','DROPOFF_LOCATION_ID') VALUES (?,?,?,?,?,?)";
+    try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+      stmt.setInt(1, passengerId);
+      stmt.setInt(2, pickupAddressId);
+      stmt.setString(3, date);
+      stmt.setString(4, time);
+      stmt.setInt(5, numberOfPassengers);
+      stmt.setInt(6, dropoffLocationId);
+      stmt.executeUpdate();
+      ResultSet rideId = stmt.getGeneratedKeys();
+      while (rideId.next()) {
+        rideId.getInt(1);
+      }
+
+    }
   }
 
   /*
@@ -475,6 +491,25 @@ public class DatabaseMethods {
   public void insertRide(Ride ride) throws SQLException {
     // TODO: Implement
     // Hint: Use getDriverIdFromEmail
+
+    String query = "INSERT INTO rides('DRIVER_ID', 'REQUEST_ID', 'ACTUAL_START_DATE', 'ACTUAL_START_TIME','ACTUAL_END_DATE', 'ACTUAL_END_TIME','RATING_FROM_PASSENGER','RATING_FROM_DRIVER','DISTANCE','CHARGE') VALUES(?,?,?,?,?,?,?,?,?,?)";
+    try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+      stmt.setInt(1, getDriverIdFromEmail(ride.getDriverEmail()));
+      stmt.setInt(2, ride.getRideRequestId());
+      stmt.setString(3, ride.getStartDate());
+      stmt.setString(4, ride.getStartTime());
+      stmt.setString(5, ride.getEndDate());
+      stmt.setString(6, ride.getEndTime());
+      stmt.setInt(7, ride.getRatingFromDriver());
+      stmt.setInt(8, ride.getRatingFromPassenger());
+      stmt.setDouble(9, ride.getDistance());
+      stmt.setDouble(10, ride.getCharge());
+      stmt.executeUpdate();
+      ResultSet rideId = stmt.getGeneratedKeys();
+      while (rideId.next()) {
+        rideId.getInt(1);
+      }
+    }
   }
 
 }
