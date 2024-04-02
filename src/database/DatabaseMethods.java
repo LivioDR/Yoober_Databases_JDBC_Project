@@ -118,7 +118,7 @@ public class DatabaseMethods {
 
     // TODO: TEST IMPLEMENTATION
     // Hint: Use the insertAddressIfNotExists method
-    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDAY', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL') values (?, ?, ?, ?, ?, ?)";
+    String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDATE', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL') values (?, ?, ?, ?, ?, ?)";
     try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, account.getFirstName());
       stmt.setString(2, account.getLastName());
