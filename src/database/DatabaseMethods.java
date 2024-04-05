@@ -86,7 +86,6 @@ public class DatabaseMethods {
    * Returns: Nothing
    */
   public void createAccount(Account account, Passenger passenger, Driver driver) throws SQLException {
-    // TODO: TEST IMPLEMENTATION
     // Hint: Use the available insertAccount, insertPassenger, and insertDriver
     // methods
 
@@ -116,7 +115,6 @@ public class DatabaseMethods {
   public int insertAccount(Account account) throws SQLException {
     int accountId = -1;
 
-    // TODO: TEST IMPLEMENTATION
     // Hint: Use the insertAddressIfNotExists method
     String query = "INSERT INTO accounts ('FIRST_NAME','LAST_NAME', 'BIRTHDATE', 'ADDRESS_ID','PHONE_NUMBER', 'EMAIL') values (?, ?, ?, ?, ?, ?)";
     try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -144,7 +142,6 @@ public class DatabaseMethods {
    * Returns: Id of the new passenger
    */
   public int insertPassenger(Passenger passenger, int accountId) throws SQLException {
-    // TODO: TEST IMPLEMENTATION
     String query = "INSERT INTO passengers VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setInt(1, accountId);
@@ -161,7 +158,6 @@ public class DatabaseMethods {
    * Returns: Id of the new driver
    */
   public int insertDriver(Driver driver, int accountId) throws SQLException {
-    // TODO: TEST IMPLEMENTATION
     // Hint: Use the insertLicense method
     int licenseId = insertLicense(driver.getLicenseNumber(), driver.getLicenseExpiryDate());
     String query = "INSERT INTO drivers values (?, ?)";
@@ -182,7 +178,7 @@ public class DatabaseMethods {
    */
   public int insertLicense(String licenseNumber, String licenseExpiry) throws SQLException {
     int licenseId = -1;
-    // TODO: TEST IMPLEMENTATION
+
     String insertLicense = "INSERT INTO licenses (NUMBER,EXPIRY_DATE) VALUES (?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(insertLicense, Statement.RETURN_GENERATED_KEYS)) {
       stmt.setString(1, licenseNumber);
@@ -209,7 +205,6 @@ public class DatabaseMethods {
   public int insertAddressIfNotExists(Address address) throws SQLException {
     int addressId = -1;
 
-    // TODO: TEST IMPLEMENTATION
 
     // 1. Get addresses and check if the Address received as an argument exists in
     // the list
@@ -270,7 +265,6 @@ public class DatabaseMethods {
    */
   public void insertFavouriteDestination(String favouriteName, String passengerEmail, int addressId)
       throws SQLException {
-    // TODO: TEST IMPLEMENTATION
 
     // 1. Get passenger ID from email (Q: do we need to validate if it is a
     // passenger?)
@@ -345,8 +339,6 @@ public class DatabaseMethods {
     int passengerId = this.getPassengerIdFromEmail(passengerEmail);
     int pickupAddressId = this.getAccountAddressIdFromEmail(passengerEmail);
 
-    // TODO: TEST IMPLEMENTATION
-
     String query = "INSERT INTO ride_requests ('PASSENGER_ID','PICKUP_LOCATION_ID','PICKUP_DATE','PICKUP_TIME','NUMBER_OF_RIDERS','DROPOFF_LOCATION_ID') VALUES (?,?,?,?,?,?)";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setInt(1, passengerId);
@@ -367,7 +359,7 @@ public class DatabaseMethods {
    */
   public int getPassengerIdFromEmail(String passengerEmail) throws SQLException {
     int passengerId = -1;
-    // TODO: TEST IMPLEMENTATION
+    
     String query = "SELECT ID from accounts WHERE EMAIL = ?";
     try(PreparedStatement stmt = conn.prepareStatement(query)){
       stmt.setString(1, passengerEmail);
@@ -387,7 +379,7 @@ public class DatabaseMethods {
    */
   public int getDriverIdFromEmail(String driverEmail) throws SQLException {
     int driverId = -1;
-    // TODO: TEST IMPLEMENTATION
+
     String query = "SELECT ID from accounts WHERE EMAIL = ?";
     try(PreparedStatement stmt = conn.prepareStatement(query)){
       stmt.setString(1, driverEmail);
@@ -408,7 +400,7 @@ public class DatabaseMethods {
    */
   public int getAccountAddressIdFromEmail(String email) throws SQLException {
     int addressId = -1;
-    // TODO: TEST IMPLEMENTATION
+    
     String query = "SELECT ADDRESS_ID from accounts WHERE EMAIL = ?";
     try(PreparedStatement stmt = conn.prepareStatement(query)){
       stmt.setString(1, email);
@@ -431,7 +423,6 @@ public class DatabaseMethods {
       throws SQLException {
     ArrayList<FavouriteDestination> favouriteDestinations = new ArrayList<FavouriteDestination>();
 
-    // TODO: TEST IMPLEMENTATION
     String query = "SELECT favourite_locations.NAME, addresses.ID, addresses.STREET, addresses.CITY, addresses.PROVINCE, addresses.POSTAL_CODE FROM passengers INNER JOIN accounts ON accounts.ID = passengers.ID INNER JOIN favourite_locations ON passengers.ID = favourite_locations.PASSENGER_ID INNER JOIN addresses ON favourite_locations.LOCATION_ID = addresses.ID WHERE accounts.EMAIL = ?";
     try (PreparedStatement stmt = conn.prepareStatement(query)) {
       stmt.setString(1, passengerEmail);
@@ -456,7 +447,6 @@ public class DatabaseMethods {
   public ArrayList<RideRequest> getUncompletedRideRequests() throws SQLException {
     ArrayList<RideRequest> uncompletedRideRequests = new ArrayList<RideRequest>();
 
-    // TODO: TEST IMPLEMENTATION
     String query = "SELECT ride_requests.*, accounts.*, pickup.*, dropoff.* FROM ride_requests INNER JOIN accounts ON accounts.ID = ride_requests.PASSENGER_ID INNER JOIN addresses pickup ON pickup.ID = ride_requests.PICKUP_LOCATION_ID INNER JOIN addresses dropoff ON dropoff.ID = ride_requests.DROPOFF_LOCATION_ID LEFT JOIN rides ON rides.REQUEST_ID = ride_requests.ID  WHERE rides.ID IS NULL";
     try(Statement stmt = conn.createStatement()){
       try(ResultSet result = stmt.executeQuery(query)){
@@ -484,7 +474,6 @@ public class DatabaseMethods {
    * Returns: Nothing
    */
   public void insertRide(Ride ride) throws SQLException {
-    // TODO: TEST IMPLEMENTATION
     // Hint: Use getDriverIdFromEmail
 
     String query = "INSERT INTO rides('DRIVER_ID', 'REQUEST_ID', 'ACTUAL_START_DATE', 'ACTUAL_START_TIME','ACTUAL_END_DATE', 'ACTUAL_END_TIME','RATING_FROM_PASSENGER','RATING_FROM_DRIVER','DISTANCE','CHARGE') VALUES(?,?,?,?,?,?,?,?,?,?)";
