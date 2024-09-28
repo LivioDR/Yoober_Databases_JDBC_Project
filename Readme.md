@@ -31,7 +31,7 @@ More information about the implemented features can be found in the [Progress an
 
 1. Clone the repository:
    ```
-   git clone https://github.com/[your-username]/yoober.git
+   git clone https://github.com/LivioDR/Yoober_Databases_JDBC_Project.git
    ```
 2. Set up your SQL database and execute the `createFreshDatabase.sql` script to create the necessary tables.
 3. Update the `App.java` file with your database connection details.
